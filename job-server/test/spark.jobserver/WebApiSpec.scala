@@ -67,6 +67,7 @@ with ScalatestRouteTest with HttpService {
       case GetJobResult("_num") =>
         sender ! JobResult("_num", 5000)
       case GetJobResult("_unk") => sender ! JobResult("_case", Seq(1, math.BigInt(101)))
+      case GetJobResult("job_to_kill") => sender ! baseJobInfo
       case GetJobResult(id) => sender ! JobResult(id, id + "!!!")
       case GetJobStatuses(limitOpt) =>
         sender ! Seq(baseJobInfo,
@@ -103,8 +104,11 @@ with ScalatestRouteTest with HttpService {
         if (events.contains(classOf[JobResult])) sender ! JobResult("foo", map)
         statusActor ! Unsubscribe("foo", sender)
 
+
       case GetJobConfig("badjobid") => sender ! NoSuchJobId
       case GetJobConfig(_)          => sender ! config
+
+
     }
   }
 
@@ -232,6 +236,15 @@ with ScalatestRouteTest with HttpService {
         responseAs[Map[String, String]] should be (Map(
           StatusKey -> "OK",
           ResultKey -> "foobar!!!"
+        ))
+      }
+    }
+
+    it("should be able to kill job from /jobs/<id> route") {
+      Delete("/jobs/job_to_kill") ~> sealRoute(routes) ~> check {
+        status should be (OK)
+        responseAs[Map[String, String]] should be (Map(
+          StatusKey -> "KILLED"
         ))
       }
     }
