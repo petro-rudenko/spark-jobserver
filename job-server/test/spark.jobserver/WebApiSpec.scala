@@ -236,6 +236,15 @@ with ScalatestRouteTest with HttpService {
       }
     }
 
+    it("should be able to kill job from /jobs/<id> route") {
+      Delete("/jobs/foo") ~> sealRoute(routes) ~> check {
+        status should be (OK)
+        responseAs[Map[String, String]] should be (Map(
+          StatusKey -> "KILLED"
+        ))
+      }
+    }
+
     it("should be able to query job config from /jobs/<id>/config route") {
       Get("/jobs/foobar/config") ~> sealRoute(routes) ~> check {
         status should be (OK)

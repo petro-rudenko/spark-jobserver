@@ -256,6 +256,7 @@ the REST API.
     GET /jobs                - Lists the last N jobs
     POST /jobs               - Starts a new job, use ?sync=true to wait for results
     GET /jobs/<jobId>        - Gets the result or status of a specific job
+    DELETE /jobs/<jobId>     - Kills the specified job
     GET /jobs/<jobId>/config - Gets the job configuration
 
 ### Context configuration
