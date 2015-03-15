@@ -252,7 +252,6 @@ class JobManagerActor(dao: JobDAO,
         resultActor ! Unsubscribe(jobId, subscriber)
         statusActor ! Unsubscribe(jobId, subscriber)
         currentRunningJobs.getAndDecrement()
-        jobContext.sparkContext.cancelJobGroup(jobId)
         postEachJob()
     }
   }
